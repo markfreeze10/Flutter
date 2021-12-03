@@ -26,7 +26,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               backgroundColor: Colors.black),
           BottomNavigationBarItem(
               icon: Icon(Icons.explore),
-              label: 'E',
+              label: 'Ee',
               backgroundColor: Colors.black),
           BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today),
