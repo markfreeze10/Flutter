@@ -13,7 +13,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-          child: Text('Hello World', style: TextStyle(color: Colors.blue))),
+          child: Text('Hello Wooorld', style: TextStyle(color: Colors.blue))),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -21,7 +21,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               label: 'E',
               backgroundColor: Colors.black),
           BottomNavigationBarItem(
-              icon: Icon(Icons.notes),
+              icon: Icon(Icons.note),
               label: 'W',
               backgroundColor: Colors.black),
           BottomNavigationBarItem(

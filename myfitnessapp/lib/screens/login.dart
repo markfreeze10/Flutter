@@ -147,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Text(
-                                  "Sie haben noch keinen Account? ",
+                                  "Sie haben keinen Account? ",
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 GestureDetector(
