@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:myfitnessapp/screens/exercises.dart';
+import 'package:myfitnessapp/base.dart';
 import 'package:myfitnessapp/screens/login.dart';
-import 'package:myfitnessapp/userdata/userdata.dart';
+import 'package:myfitnessapp/userdata/user_data.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -151,7 +151,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final registrationButton = Material(
         elevation: 5,
         borderRadius: BorderRadius.circular(20),
-        color: Colors.blueAccent,
+        color: Color(0xff31a6dc),
         child: MaterialButton(
             padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
             minWidth: MediaQuery.of(context).size.width,
@@ -272,7 +272,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => ExerciseScreen()),
+        MaterialPageRoute(builder: (context) => BaseScreen()),
         (route) => false);
   }
 }

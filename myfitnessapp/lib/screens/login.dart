@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:myfitnessapp/screens/exercises.dart';
+import 'package:myfitnessapp/base.dart';
 
-import 'exercises.dart';
+import '../base.dart';
 import 'registration.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -87,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final loginButton = Material(
         elevation: 5,
         borderRadius: BorderRadius.circular(20),
-        color: Colors.blueAccent,
+        color: Color(0xff31a6dc),
         child: MaterialButton(
             padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
             minWidth: MediaQuery.of(context).size.width,
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           padding: EdgeInsets.all(20),
                           child: Text('Login',
                               style: TextStyle(
-                                  fontSize: 30.0, color: Colors.blue)),
+                                  fontSize: 30.0, color: Color(0xff31a6dc))),
                         ),
                         Padding(
                             padding: EdgeInsets.only(
@@ -160,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     },
                                     child: Text("Hier registrieren",
                                         style: TextStyle(
-                                            color: Colors.blue,
+                                            color: Color(0xff31a6dc),
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15)))
                               ],
@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
           .then((uid) => {
                 Fluttertoast.showToast(msg: "Login erfolgreich"),
                 Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => ExerciseScreen()))
+                    MaterialPageRoute(builder: (context) => BaseScreen()))
               })
           .catchError((e) {
         Fluttertoast.showToast(msg: e!.message);
