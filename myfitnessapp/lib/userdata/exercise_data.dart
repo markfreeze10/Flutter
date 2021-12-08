@@ -36,9 +36,14 @@ String getCategoryName(BodyCategory category) {
 }
 
 class ExerciseData {
-  String? name;
-  String? description;
-  BodyCategory? category;
+  final String name;
+  final String description;
+  final BodyCategory category;
+  final String imageName;
 
-  ExerciseData({this.name, this.description, this.category});
+  ExerciseData(
+      {required this.name,
+      required this.description,
+      required this.category,
+      required this.imageName});
 }

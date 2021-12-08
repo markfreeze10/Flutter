@@ -71,8 +71,7 @@ class _BaseScreenState extends State<BaseScreen> {
                 icon: Icon(Ionicons.document_text_outline),
                 title: Text('Workout')),
             BottomNavigationBarItem(
-                icon: Icon(Ionicons.navigate_circle_outline),
-                title: Text('Erkunden')),
+                icon: Icon(Ionicons.globe_outline), title: Text('Erkunden')),
             BottomNavigationBarItem(
                 icon: Icon(Ionicons.calendar_outline), title: Text('Kalender')),
             BottomNavigationBarItem(

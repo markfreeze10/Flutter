@@ -10,8 +10,6 @@ class ExerciseScreen extends StatefulWidget {
 }
 
 class _ExerciseScreenState extends State<ExerciseScreen> {
-  BodyCategory bodyCategory = BodyCategory.all;
-
   final ButtonStyle style = ElevatedButton.styleFrom(
     textStyle: const TextStyle(fontSize: 20),
     primary: Color(0xff31a6dc),
@@ -22,6 +20,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
   double widthSizedbox = 0.9;
   double heigthSizedbox = 0.065;
+  BodyCategory bodyCategory = BodyCategory.abs;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +32,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Padding(
-                      padding: EdgeInsets.all(14),
+                      padding: EdgeInsets.fromLTRB(
+                          MediaQuery.of(context).size.width * 0.05, 12, 12, 0),
                       child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text('Übungen',
@@ -41,6 +41,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                   color: Color(0xff31a6dc))))),
+                  SizedBox(height: 20),
                   SizedBox(
                       width: MediaQuery.of(context).size.width * widthSizedbox,
                       height:
@@ -49,9 +50,16 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           style: style,
                           child: Text('Brust'),
                           onPressed: () {
-                            _ExerciseScreenState()
-                                .setCategory(BodyCategory.chest);
-                            _navigateToNextScreen(context);
+                            setState(() {
+                              bodyCategory = BodyCategory.chest;
+                            });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ExerciseListScreen(),
+                                    settings: RouteSettings(
+                                        arguments: bodyCategory)));
                           })),
                   SizedBox(height: 10),
                   SizedBox(
@@ -63,9 +71,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           child: Text('Rücken'),
                           onPressed: () {
                             setState(() {
-                              setCategory(BodyCategory.back);
+                              bodyCategory = BodyCategory.back;
                             });
-                            _navigateToNextScreen(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ExerciseListScreen(),
+                                    settings: RouteSettings(
+                                        arguments: bodyCategory)));
                           })),
                   SizedBox(height: 10),
                   SizedBox(
@@ -77,9 +91,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           child: Text('Arme'),
                           onPressed: () {
                             setState(() {
-                              setCategory(BodyCategory.arms);
+                              bodyCategory = BodyCategory.arms;
                             });
-                            _navigateToNextScreen(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ExerciseListScreen(),
+                                    settings: RouteSettings(
+                                        arguments: bodyCategory)));
                           })),
                   SizedBox(height: 10),
                   SizedBox(
@@ -91,9 +111,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           child: Text('Schultern'),
                           onPressed: () {
                             setState(() {
-                              setCategory(BodyCategory.shoulders);
+                              bodyCategory = BodyCategory.shoulders;
                             });
-                            _navigateToNextScreen(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ExerciseListScreen(),
+                                    settings: RouteSettings(
+                                        arguments: bodyCategory)));
                           })),
                   SizedBox(height: 10),
                   SizedBox(
@@ -105,9 +131,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           child: Text('Beine'),
                           onPressed: () {
                             setState(() {
-                              setCategory(BodyCategory.legs);
+                              bodyCategory = BodyCategory.legs;
                             });
-                            _navigateToNextScreen(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ExerciseListScreen(),
+                                    settings: RouteSettings(
+                                        arguments: bodyCategory)));
                           })),
                   SizedBox(height: 10),
                   SizedBox(
@@ -119,9 +151,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           child: Text('Bauch'),
                           onPressed: () {
                             setState(() {
-                              setCategory(BodyCategory.abs);
+                              bodyCategory = BodyCategory.abs;
                             });
-                            _navigateToNextScreen(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ExerciseListScreen(),
+                                    settings: RouteSettings(
+                                        arguments: bodyCategory)));
                           })),
                   SizedBox(height: 10),
                   SizedBox(
@@ -133,9 +171,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           child: Text('Mobility'),
                           onPressed: () {
                             setState(() {
-                              setCategory(BodyCategory.mobility);
+                              bodyCategory = BodyCategory.mobility;
                             });
-                            _navigateToNextScreen(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ExerciseListScreen(),
+                                    settings: RouteSettings(
+                                        arguments: bodyCategory)));
                           })),
                   SizedBox(height: 10),
                   SizedBox(
@@ -146,8 +190,16 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                           style: style,
                           child: Text('Alle Kategorien'),
                           onPressed: () {
-                            setState() => bodyCategory = BodyCategory.all;
-                            _navigateToNextScreen(context);
+                            setState(() {
+                              bodyCategory = BodyCategory.all;
+                            });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ExerciseListScreen(),
+                                    settings: RouteSettings(
+                                        arguments: bodyCategory)));
                           })),
                 ])));
   }
@@ -156,92 +208,27 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                const ExerciseListScreen(bodyCategory: BodyCategory.abs)));
-  }
-
-  void setCategory(BodyCategory bodyCategory) {
-    this.bodyCategory = bodyCategory;
+            builder: (context) => const ExerciseListScreen(),
+            settings: RouteSettings(arguments: bodyCategory)));
   }
 }
 
 class ExerciseListScreen extends StatefulWidget {
-  const ExerciseListScreen(
-      {Key? key, required: BodyCategory, required this.bodyCategory})
-      : super(key: key);
-
-  final BodyCategory bodyCategory;
+  const ExerciseListScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          backgroundColor: Colors.transparent,
-          //elevation
-          elevation: 0,
-        ),
-        body: ListView.builder(
-            itemCount: Exercises.length,
-            itemBuilder: (BuildContext context, int index) {
-              print('hallooo' + bodyCategory.toString());
-              return Container(
-                height: 50,
-                margin: EdgeInsets.all(2),
-                color: Colors.green,
-                child: Center(
-                    child: Text(
-                  bodyCategory.toString(),
-                  //_ExerciseScreenState.getCategory.toString(),
-                  //'${Exercises[index].name}',
-                  style: TextStyle(fontSize: 22, color: Colors.white),
-                )),
-              );
-            }));
-  }
+  _ExerciseListScreen createState() => _ExerciseListScreen();
 }
 
-class _ExerciseListScreenState extends State<ExerciseListScreen> {
-  /*
-  Widget build(BuildContext context) => SliverPadding(
-        padding: const EdgeInsets.all(16),
-        sliver: SliverList(
-          delegate: SliverChildListDelegate(
-            [
-              SizedBox(height: 8),
-              Text(
-                'Exercise',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-              ),
-              SizedBox(height: 8),
-              SizedBox(height: 8),
-              buildWorkouts(),
-            ],
-          ),
-        ),
-      );
-
-      Container(
-  height: 120,
-  child: ListView.builder(
-    shrinkWrap: true,
-    scrollDirection: Axis.horizontal,
-    itemCount: map.length,
-    itemBuilder: (context, index) => Column(
-      children: [
-        Text(_country.elementAt(index).name),
-        Text(_country.elementAt(index).capital),
-Text(_country.elementAt(index).language),
-      ],
-    ),
-  )
-  */
+class _ExerciseListScreen extends State<ExerciseListScreen> {
+//BodyCategory cat = _ExerciseScreenState().getCategory;
 
   @override
   Widget build(BuildContext context) {
+    final category = ModalRoute.of(context)!.settings.arguments as BodyCategory;
+    String categoryName = getCategoryName(category);
+    //final List<ExerciseData> exerciseData = Exercises.where(Exercises[index])
+
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -249,33 +236,110 @@ Text(_country.elementAt(index).language),
             onPressed: () => Navigator.of(context).pop(),
           ),
           backgroundColor: Colors.transparent,
-          //elevation
+          title: Text(categoryName,
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           elevation: 0,
         ),
-        body: ListView.builder(
-            itemCount: Exercises.length,
-            itemBuilder: (BuildContext context, int index) {
-              print('hallooo' + bodyCategory.toString());
-              return Container(
-                height: 50,
-                margin: EdgeInsets.all(2),
-                color: Colors.green,
-                child: Center(
-                    child: Text(
-                  bodyCategory.toString(),
-                  //_ExerciseScreenState.getCategory.toString(),
-                  //'${Exercises[index].name}',
-                  style: TextStyle(fontSize: 22, color: Colors.white),
-                )),
-              );
-            }));
+        body: Container(
+          color: Color(0xff31a6dc),
+
+          //margin: EdgeInsets.all(8),
+          padding: EdgeInsets.all(8),
+          child: ListView.builder(
+
+              //padding: EdgeInsets.only(top: 8.0),
+              itemCount: Exercises.length,
+              itemBuilder: (BuildContext context, int index) {
+                if (Exercises[index].category == category) {
+                  return GestureDetector(
+                      onTap: () {
+                        createPopUp(
+                            context,
+                            Exercises[index].name,
+                            Exercises[index].description,
+                            Exercises[index].imageName,
+                            category);
+                      },
+                      child: Card(
+                          child: Row(children: <Widget>[
+                        Container(
+                          width: 100,
+                          height: 100,
+                          child: Image.asset(Exercises[index].imageName),
+                        ),
+                        Container(
+                            child: Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Text('${Exercises[index].name}',
+                                    maxLines: 3,
+                                    style: TextStyle(
+                                        color: Color(0xff2b2c3c),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold))))
+                      ])));
+                } else if (category == BodyCategory.all) {
+                  return GestureDetector(
+                      onTap: () {
+                        createPopUp(
+                            context,
+                            Exercises[index].name,
+                            Exercises[index].description,
+                            Exercises[index].imageName,
+                            category);
+                      },
+                      child: Card(
+                          child: Row(children: <Widget>[
+                        Container(
+                          width: 100,
+                          height: 100,
+                          child: Image.asset(Exercises[index].imageName),
+                        ),
+                        Container(
+                            child: Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Text('${Exercises[index].name}',
+                                    maxLines: 3,
+                                    style: TextStyle(
+                                        color: Color(0xff2b2c3c),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold))))
+                      ])));
+                } else {
+                  return const SizedBox();
+                }
+              }),
+        ));
   }
 
-  Widget buildWorkouts() => Column(
-        children: Exercises.map(
-          (exerciseSet) => Container(
-            margin: const EdgeInsets.symmetric(vertical: 10),
-          ),
-        ).toList(),
-      );
+  createPopUp(context, String name, String description, String imageName,
+      BodyCategory bodyCategory) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+              child: Material(
+                  type: MaterialType.transparency,
+                  child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white),
+                      padding: EdgeInsets.all(15),
+                      height: MediaQuery.of(context).size.height * 0.6,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: Column(
+                        children: <Widget>[
+                          Text('Ausführung',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          Container(
+                              width: 300,
+                              height: 300,
+                              child: Image.asset(imageName)),
+                          SizedBox(height: 10),
+                          Container(child: Text(description))
+                        ],
+                      ))));
+        });
+  }
 }
