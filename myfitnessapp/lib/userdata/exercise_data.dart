@@ -27,7 +27,7 @@ String getCategoryName(BodyCategory category) {
       return 'Mobility';
       break;
     case BodyCategory.all:
-      return 'Alle Kategorien';
+      return 'Alle Übungen';
       break;
     default:
       return 'Fehler';
