@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:myfitnessapp/data/exercises.dart';
 import 'package:myfitnessapp/userdata/exercise_data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ExerciseScreen extends StatefulWidget {
   const ExerciseScreen({Key? key}) : super(key: key);
@@ -93,10 +97,10 @@ class ExerciseListScreen extends StatefulWidget {
 class _ExerciseListScreen extends State<ExerciseListScreen> {
   TextEditingController searchController = TextEditingController();
   TextEditingController exerciseController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
 
   List<ExerciseData> searchList = [];
   List<ExerciseData> addedExercises = [];
-  List<ExerciseData> tempList = Exercises;
 
   List<BodyCategory> allCategories = [
     BodyCategory.chest,
@@ -109,17 +113,71 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
   ];
 
   BodyCategory dropDownCategory = BodyCategory.back;
-  String test = '1';
-  ExerciseData exerciseData = new ExerciseData(
-      name: 'Liegestütze',
-      description: '...',
-      category: BodyCategory.chest,
-      imageName: 'assets/strong.png');
+
+  static const String defaultImg = 'assets/strong.png';
+
+  final exercise = ExerciseData(
+      name: 'hallo',
+      description: 'hallo',
+      category: BodyCategory.abs,
+      imageName: 'defaultImg',
+      editable: false);
+
+  final exercise2 = ExerciseData(
+      name: 'hallooo',
+      description: 'hallooo',
+      category: BodyCategory.abs,
+      imageName: 'defaultImg',
+      editable: false);
+
+  Future<void> saveExerciseToSP(List<ExerciseData> exerciseList) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var encodedExercises = json.encode(exerciseList);
+    prefs.setString(exerciseList.toString(), encodedExercises);
+    print('hey ' + exerciseList.toString());
+  }
+
+  Future<void> getExerciseFromSP(ExerciseData exerciseData) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+  }
+
+/*
+  Future<void> saveUserInfo() async {
+    Map<String, dynamic> exerciseMap;
+
+    String exercisesJson = jsonEncode(Exercises);
+    final json = Exercises.toJson();
+    print('Json: ${exercise.toJson()}');
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool result = await prefs.setStringList('Exercises', jsonEncode(Exercises));
+    bool result2 = await prefs.setString('exercise2', jsonEncode(exercise2));
+
+    print('gude ' + result.toString());
+  }
+
+  Future<ExerciseData?> getUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final String? exerciseStr = prefs.getString('exercise');
+    final String? exerciseStr2 = prefs.getString('exercise2');
+
+    Map<String, dynamic> exerciseMap = jsonDecode(prefs.getString('exercise')!);
+
+    if (exerciseMap != null) {
+      final ExerciseData exer = ExerciseData.fromJson(exerciseMap);
+      print(exer);
+      print('tach');
+      return exer;
+    }
+    return null;
+  }
+  */
 
   @override
   Widget build(BuildContext context) {
     final category = ModalRoute.of(context)!.settings.arguments as BodyCategory;
     String categoryName = getCategoryName(category);
+    saveExerciseToSP(Exercises);
 
     return Scaffold(
         appBar: AppBar(
@@ -138,8 +196,7 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
                 onPressed: () {
                   setState(() {
                     //addedExercises.add(exerciseData);
-                    tempList = addedExercises + Exercises;
-                    addExercise();
+                    addExercisePopUp(category);
                   });
                 },
                 icon: Icon(Icons.add_circle_outline, color: Colors.black))
@@ -164,16 +221,17 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
               )),
           searchList.isNotEmpty || searchController.text.isNotEmpty
               ? expandList(searchList, category)
-              : expandList(tempList, category),
+              : expandList(Exercises, category),
         ])));
   }
 
-  addExercise() {
-    String dropdownValue = 'One';
+  Future addExercisePopUp(BodyCategory category) {
     return showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
               title: Text('Übung hinzufügen'),
               content: Container(
                   width: MediaQuery.of(context).size.width * 0.8,
@@ -185,6 +243,7 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
                     Padding(
                         padding: EdgeInsets.all(10),
                         child: TextField(
+                          controller: exerciseController,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius:
@@ -196,37 +255,67 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
                     Padding(
                         padding: EdgeInsets.all(10),
                         child: TextField(
+                          controller: descriptionController,
                           decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(4.0)))),
                         )),
-                    Padding(
-                        padding: EdgeInsets.all(4), child: Text('Kategorie: ')),
-                    DropdownButton<String>(
-                      value: dropdownValue,
-                      icon: const Icon(Icons.arrow_downward),
-                      elevation: 16,
-                      style: const TextStyle(color: Colors.deepPurple),
-                      underline: Container(
-                        height: 2,
-                        color: Colors.deepPurpleAccent,
-                      ),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          dropdownValue = newValue!;
-                        });
-                      },
-                      items: <String>['One', 'Two', 'Free', 'Four']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    )
-                  ])));
+                    checkCategoryAddExercise(category)
+                  ])),
+              actions: [
+                TextButton(onPressed: saveExercise, child: Text('Speichern'))
+              ],
+            );
+          });
         });
+  }
+
+  checkCategoryAddExercise(BodyCategory category) {
+    if (category == BodyCategory.all) {
+      return Column(children: [
+        Padding(padding: EdgeInsets.all(4), child: Text('Kategorie: ')),
+        Padding(
+            padding: EdgeInsets.all(1),
+            child: DropdownButton<BodyCategory>(
+              value: dropDownCategory,
+              underline: Container(
+                height: 2,
+                color: Color(0xff31a6dc),
+              ),
+              items: allCategories.map((BodyCategory bodyCategory) {
+                return new DropdownMenuItem<BodyCategory>(
+                  value: bodyCategory,
+                  child: new Text(getCategoryName(bodyCategory)),
+                );
+              }).toList(),
+              onChanged: (BodyCategory? newCategory) {
+                setState(() {
+                  dropDownCategory = newCategory!;
+                });
+              },
+            ))
+      ]);
+    } else {
+      dropDownCategory = category;
+      return SizedBox();
+    }
+  }
+
+  saveExercise() {
+    setState(() {
+      ExerciseData newExercise = new ExerciseData(
+          name: exerciseController.text,
+          description: descriptionController.text,
+          category: dropDownCategory,
+          imageName: defaultImg,
+          editable: true);
+      Exercises.add(newExercise);
+    });
+
+    Navigator.of(context).pop();
+    exerciseController.clear();
+    descriptionController.clear();
   }
 
   createPopUp(context, String name, String description, String imageName,
@@ -262,15 +351,64 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
 
   onSearchChanged(String value, BodyCategory category) async {
     setState(() {
-      searchList = tempList
-          .where((ExerciseData) =>
-              ExerciseData.name.toLowerCase().contains(value.toLowerCase()) &&
-              (ExerciseData.category == category ||
-                  category == BodyCategory.all))
-          .toList();
+      searchList = Exercises.where((ExerciseData) =>
+          ExerciseData.name.toLowerCase().contains(value.toLowerCase()) &&
+          (ExerciseData.category == category ||
+              category == BodyCategory.all)).toList();
     });
   }
 
+  Widget gestureDetectBuilder(
+      List<ExerciseData> list, int index, BodyCategory category) {
+    return GestureDetector(
+        onTap: () {
+          createPopUp(context, list[index].name, list[index].description,
+              list[index].imageName, category);
+        },
+        child: Card(
+            child: Row(children: <Widget>[
+          Container(
+            width: 100,
+            height: 100,
+            child: Image.asset(list[index].imageName),
+          ),
+          Container(
+              child: Padding(
+            padding: EdgeInsets.all(8),
+            child: Text('${list[index].name}',
+                maxLines: 3,
+                style: TextStyle(
+                    color: Color(0xff2b2c3c),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold)),
+          ))
+        ])));
+  }
+
+  //checken, ob Übung neu angelegt wurde
+  //nur neu angelegte Übungen dürften gelöscht werden
+  Widget checkDismissed(
+      List<ExerciseData> list, int index, BodyCategory category) {
+    if (list[index].editable) {
+      return Dismissible(
+        direction: DismissDirection.endToStart,
+        background: Container(
+          color: Colors.redAccent,
+        ),
+        key: UniqueKey(),
+        child: gestureDetectBuilder(list, index, category),
+        onDismissed: (direction) {
+          setState(() {
+            list.removeAt(index);
+          });
+        },
+      );
+    } else {
+      return gestureDetectBuilder(list, index, category);
+    }
+  }
+
+  //Liste mit Übungen
   Widget expandList(List<ExerciseData> list, BodyCategory category) {
     return Expanded(
       //Expanded mit Liste der Übungen
@@ -279,70 +417,9 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
           itemCount: list.length,
           itemBuilder: (BuildContext context, int index) {
             if (list[index].category == category) {
-              return Dismissible(
-                key: UniqueKey(),
-                child: GestureDetector(
-                    onTap: () {
-                      createPopUp(
-                          context,
-                          list[index].name,
-                          list[index].description,
-                          list[index].imageName,
-                          category);
-                    },
-                    child: Card(
-                        child: Row(children: <Widget>[
-                      Container(
-                        width: 100,
-                        height: 100,
-                        child: Image.asset(list[index].imageName),
-                      ),
-                      Container(
-                          child: Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text('${list[index].name}',
-                            maxLines: 3,
-                            style: TextStyle(
-                                color: Color(0xff2b2c3c),
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold)),
-                      ))
-                    ]))),
-                onDismissed: (direction) {
-                  setState(() {
-                    list.removeAt(index);
-                  });
-                },
-              );
+              return checkDismissed(list, index, category);
             } else if (category == BodyCategory.all) {
-              return Dismissible(
-                  key: UniqueKey(),
-                  child: GestureDetector(
-                      onTap: () {
-                        createPopUp(
-                            context,
-                            list[index].name,
-                            list[index].description,
-                            list[index].imageName,
-                            category);
-                      },
-                      child: Card(
-                          child: Row(children: <Widget>[
-                        Container(
-                          width: 100,
-                          height: 100,
-                          child: Image.asset(list[index].imageName),
-                        ),
-                        Container(
-                            child: Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Text('${list[index].name}',
-                                    maxLines: 3,
-                                    style: TextStyle(
-                                        color: Color(0xff2b2c3c),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold))))
-                      ]))));
+              return checkDismissed(list, index, category);
             } else {
               return const SizedBox();
             }
