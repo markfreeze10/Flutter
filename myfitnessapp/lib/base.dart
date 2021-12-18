@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:myfitnessapp/screens/exercise.dart';
+import 'package:myfitnessapp/tab_navigator.dart';
 
 import 'screens/calendar.dart';
 import 'screens/explore.dart';
@@ -15,6 +16,98 @@ class BaseScreen extends StatefulWidget {
 }
 
 class _BaseScreenState extends State<BaseScreen> {
+  String _currentPage = "Exercises";
+  List<String> pageKeys = [
+    "Exercises",
+    "Workout",
+    "Explore",
+    "Calendar",
+    "Profil"
+  ];
+  Map<String, GlobalKey<NavigatorState>> _navigatorKeys = {
+    "Exercises": GlobalKey<NavigatorState>(),
+    "Workout": GlobalKey<NavigatorState>(),
+    "Explore": GlobalKey<NavigatorState>(),
+    "Calendar": GlobalKey<NavigatorState>(),
+    "Profil": GlobalKey<NavigatorState>(),
+  };
+  int _selectedIndex = 0;
+
+  void _selectTab(String tabItem, int index) {
+    if (tabItem == _currentPage) {
+      _navigatorKeys[tabItem]!.currentState!.popUntil((route) => route.isFirst);
+    } else {
+      setState(() {
+        _currentPage = pageKeys[index];
+        _selectedIndex = index;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        final isFirstRouteInCurrentTab =
+            await _navigatorKeys[_currentPage]!.currentState!.maybePop();
+        if (isFirstRouteInCurrentTab) {
+          if (_currentPage != "Exercises") {
+            _selectTab("Exercises", 1);
+
+            return false;
+          }
+        }
+        // let system handle back button if we're on the first route
+        return isFirstRouteInCurrentTab;
+      },
+      child: Scaffold(
+        body: Stack(children: <Widget>[
+          _buildOffstageNavigator("Exercises"),
+          _buildOffstageNavigator("Workout"),
+          _buildOffstageNavigator("Explore"),
+          _buildOffstageNavigator("Calendar"),
+          _buildOffstageNavigator("Profil"),
+        ]),
+        bottomNavigationBar: BottomNavigationBar(
+          selectedItemColor: Colors.blueAccent,
+          backgroundColor: Color(0xff2b2c3c),
+          unselectedItemColor: Colors.white.withOpacity(0.8),
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          onTap: (int index) {
+            _selectTab(pageKeys[index], index);
+          },
+          currentIndex: _selectedIndex,
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(Ionicons.barbell_outline), title: Text('Exercises')),
+            BottomNavigationBarItem(
+                icon: Icon(Ionicons.document_text_outline),
+                title: Text('Workout')),
+            BottomNavigationBarItem(
+                icon: Icon(Ionicons.globe_outline), title: Text('Explore')),
+            BottomNavigationBarItem(
+                icon: Icon(Ionicons.calendar_outline), title: Text('Calendar')),
+            BottomNavigationBarItem(
+                icon: Icon(Ionicons.person_outline), title: Text('Profil'))
+          ],
+          type: BottomNavigationBarType.fixed,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOffstageNavigator(String tabItem) {
+    return Offstage(
+      offstage: _currentPage != tabItem,
+      child: TabNavigator(
+        navigatorKey: _navigatorKeys[tabItem],
+        tabItem: tabItem,
+      ),
+    );
+  }
+
+  /*
   int _index = 0;
 
   void _switchItem(int index) {
@@ -36,7 +129,7 @@ class _BaseScreenState extends State<BaseScreen> {
     WorkoutScreen(),
     ExploreScreen(),
     CalendarScreen(),
-    ProfilScreen()
+    ProfilScreen(),
   ];
 
   @override
@@ -85,5 +178,6 @@ class _BaseScreenState extends State<BaseScreen> {
             physics: NeverScrollableScrollPhysics())
         //physics: ClampingScrollPhysics()
         );
-  }
+  }*/
+
 }

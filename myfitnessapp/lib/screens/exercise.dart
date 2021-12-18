@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:myfitnessapp/data/exercises.dart';
-import 'package:myfitnessapp/userdata/exercise_data.dart';
+import 'package:myfitnessapp/data/appData.dart';
+import 'package:myfitnessapp/model/exercise_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ExerciseScreen extends StatefulWidget {
@@ -29,9 +29,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     return Scaffold(
         body: Align(
             alignment: Alignment.center,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+            child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                //crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Padding(
                       padding: EdgeInsets.fromLTRB(
@@ -130,6 +129,7 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
       imageName: 'defaultImg',
       editable: false);
 
+  /*
   Future<void> saveExerciseToSP(List<ExerciseData> exerciseList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var encodedExercises = json.encode(exerciseList);
@@ -140,68 +140,35 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
   Future<void> getExerciseFromSP(ExerciseData exerciseData) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
   }
-
-/*
-  Future<void> saveUserInfo() async {
-    Map<String, dynamic> exerciseMap;
-
-    String exercisesJson = jsonEncode(Exercises);
-    final json = Exercises.toJson();
-    print('Json: ${exercise.toJson()}');
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool result = await prefs.setStringList('Exercises', jsonEncode(Exercises));
-    bool result2 = await prefs.setString('exercise2', jsonEncode(exercise2));
-
-    print('gude ' + result.toString());
-  }
-
-  Future<ExerciseData?> getUserInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    final String? exerciseStr = prefs.getString('exercise');
-    final String? exerciseStr2 = prefs.getString('exercise2');
-
-    Map<String, dynamic> exerciseMap = jsonDecode(prefs.getString('exercise')!);
-
-    if (exerciseMap != null) {
-      final ExerciseData exer = ExerciseData.fromJson(exerciseMap);
-      print(exer);
-      print('tach');
-      return exer;
-    }
-    return null;
-  }
   */
-
   @override
   Widget build(BuildContext context) {
     final category = ModalRoute.of(context)!.settings.arguments as BodyCategory;
     String categoryName = getCategoryName(category);
-    saveExerciseToSP(Exercises);
+    //saveExerciseToSP(Exercises);
 
     return Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          backgroundColor: Colors.transparent,
-          title: Text(categoryName,
-              style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          centerTitle: true,
-          elevation: 0,
-          actions: [
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    //addedExercises.add(exerciseData);
-                    addExercisePopUp(category);
-                  });
-                },
-                icon: Icon(Icons.add_circle_outline, color: Colors.black))
-          ],
-        ),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            backgroundColor: Colors.transparent,
+            title: Text(categoryName,
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold)),
+            centerTitle: true,
+            elevation: 0,
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      //addedExercises.add(exerciseData);
+                      addExercisePopUp(category);
+                    });
+                  },
+                  icon: Icon(Icons.add_circle_outline, color: Colors.black))
+            ]),
         body: Container(
             //Container für die Suchfunktion über den Übungen
             child: Column(children: <Widget>[
@@ -264,7 +231,9 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
                     checkCategoryAddExercise(category)
                   ])),
               actions: [
-                TextButton(onPressed: saveExercise, child: Text('Speichern'))
+                Center(
+                    child: TextButton(
+                        onPressed: saveExercise, child: Text('Speichern')))
               ],
             );
           });
@@ -313,7 +282,9 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
       Exercises.add(newExercise);
     });
 
-    Navigator.of(context).pop();
+    //Navigator.popUntil(context, (Route<dynamic> route) => route.isCurrent);
+    Navigator.of(context, rootNavigator: true).pop();
+
     exerciseController.clear();
     descriptionController.clear();
   }

@@ -1,5 +1,44 @@
 import 'package:flutter/foundation.dart';
-import 'package:myfitnessapp/userdata/exercise_data.dart';
+import 'package:myfitnessapp/model/exercise_model.dart';
+import 'package:myfitnessapp/model/workout_model.dart';
+import 'package:myfitnessapp/model/workoutinfo_model.dart';
+
+List<WorkoutInfo> workoutInfoList = [
+  WorkoutInfo(workoutName: "Brust", exerciseList: tempExercises)
+];
+List<Workout> workoutList = [];
+int pageCounter = 0;
+
+final List<DateTime> dates = [DateTime(2021, 10, 10)];
+List<BodyCategory> bList = [BodyCategory.abs, BodyCategory.chest];
+
+var exer = ExerciseData(
+    name: 'Bankdrücken mit Langhantel',
+    description: 'Ellenbogen 45°',
+    category: BodyCategory.chest,
+    imageName: 'assets/bench_press.jpg',
+    editable: false);
+
+var tempExercises = [
+  ExerciseData(
+      name: 'Bankdrücken mit Langhantel',
+      description: 'Ellenbogen 45°',
+      category: BodyCategory.chest,
+      imageName: 'assets/bench_press.jpg',
+      editable: false),
+  ExerciseData(
+      name: 'Klimmzüge',
+      description: 'Kinn über Stange',
+      category: BodyCategory.back,
+      imageName: 'assets/chin_ups.jpg',
+      editable: false),
+  ExerciseData(
+      name: 'Bankdrücken mit Kurzhantel',
+      description: 'Ellenbogen 45°',
+      category: BodyCategory.chest,
+      imageName: 'assets/chest_press.jpg',
+      editable: false)
+];
 
 final Exercises = [
   ExerciseData(

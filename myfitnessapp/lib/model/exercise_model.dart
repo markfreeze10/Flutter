@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'exercise_data.g.dart';
+part 'exercise_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class ExerciseData {
   final String name;
   final String description;
@@ -29,7 +29,24 @@ class ExerciseData {
       'ExerciseData{name: $name, description: $description, category: $category, imageName: $imageName, editable: $editable}';
 }
 
-enum BodyCategory { chest, back, arms, abs, legs, shoulders, mobility, all }
+enum BodyCategory {
+  @JsonValue("chest")
+  chest,
+  @JsonValue("back")
+  back,
+  @JsonValue("arms")
+  arms,
+  @JsonValue("abs")
+  abs,
+  @JsonValue("legs")
+  legs,
+  @JsonValue("shoulders")
+  shoulders,
+  @JsonValue("mobility")
+  mobility,
+  @JsonValue("all")
+  all
+}
 
 String getCategoryName(BodyCategory category) {
   switch (category) {
