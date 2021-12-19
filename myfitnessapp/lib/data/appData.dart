@@ -3,9 +3,8 @@ import 'package:myfitnessapp/model/exercise_model.dart';
 import 'package:myfitnessapp/model/workout_model.dart';
 import 'package:myfitnessapp/model/workoutinfo_model.dart';
 
-List<WorkoutInfo> workoutInfoList = [
-  WorkoutInfo(workoutName: "Brust", exerciseList: tempExercises)
-];
+List<WorkoutInfo> workoutInfoList = [];
+
 List<Workout> workoutList = [];
 int pageCounter = 0;
 
