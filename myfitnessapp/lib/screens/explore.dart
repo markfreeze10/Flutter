@@ -38,28 +38,60 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> workoutinfo2 =
         FirebaseFirestore.instance.collection('workoutinfo').snapshots();
-    tMap = _workoutInfoToJson(workoutInfoList[0]);
-    CollectionReference workoutinfo =
-        FirebaseFirestore.instance.collection('workoutinfo');
+    /* var snapshot =  FirebaseFirestore.instance.collection('workoutinfo').get();
+    return snapshot. */
+
+    //CollectionReference exerciseData = FirebaseFirestore.instance.collection('exerciseData');
+    /* CollectionReference workoutinfo =
+        FirebaseFirestore.instance.collection('workoutinfo'); */
     return Center(
         child: Container(
-      color: Colors.transparent,
-      child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        ElevatedButton(
+            color: Colors.transparent,
+            child: StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('workoutinfo')
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  return ListView(
+                    children: snapshot.data!.docs.map((document) {
+                      return Container(
+                        child: Center(
+                            child: Text(document['exerciseList'].toString())),
+                      );
+                    }).toList(),
+                  );
+                  /*Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+         ElevatedButton(
             onPressed: () {
-              var x = wInfo.toJson();
+              var x = exer.toJson();
+              var y = wInfo.toJson();
+              
               //print(x);
-              StreamBuilder<QuerySnapshot>(
-                  stream: workoutinfo2,
+              //print(y);
+              //exerciseData.add(x);
+              //workoutinfo.add(y);
+              //print(x);
+
+              /* StreamBuilder<QuerySnapshot>(
+                  stream: workoutinfo,
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     final data = snapshot.requireData;
 
                     setState(() {
-                      w = Text('${data.docs[0]['workoutName']}');
+                      w = Text('${data.docs[0]['name']}');
                     });
-                    return w;
-                  });
+                    print('hhh');
+                    print('${data.docs[0]['name']}');
+                    return Text('${data.docs[0]['name']}');
+                  }); */
               //workoutinfo.get()
               // FirebaseFirestore.instance
               //     .collection("workoutinfo")
@@ -74,9 +106,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               // print(workoutList);
               // print('asdasf');
             },
-            child: Text('gude')),
-        w,
-      ]),
-    ));
+            child: Text('gude')), */
+                })));
   }
 }

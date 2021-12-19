@@ -7,8 +7,8 @@ part of 'workoutinfo_model.dart';
 // **************************************************************************
 
 WorkoutInfo _$WorkoutInfoFromJson(Map<String, dynamic> json) => WorkoutInfo(
-      workoutName: json['name'] as String,
-      workoutDescription: json['description'] as String?,
+      workoutName: json['workoutName'] as String,
+      workoutDescription: json['workoutDescription'] as String?,
       exerciseList: (json['exerciseList'] as List<dynamic>)
           .map((e) => ExerciseData.fromJson(e as Map<String, dynamic>))
           .toList(),
