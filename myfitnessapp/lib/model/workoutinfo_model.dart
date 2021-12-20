@@ -12,7 +12,6 @@ class WorkoutInfo {
   int? likes;
   List<BodyCategory>? categoryList;
   Level? level;
-  bool? liked;
 
   WorkoutInfo(
       {required this.workoutName,
@@ -20,8 +19,7 @@ class WorkoutInfo {
       required this.exerciseList,
       this.likes,
       this.categoryList,
-      this.level,
-      this.liked});
+      this.level});
 
   factory WorkoutInfo.fromJson(Map<String, dynamic> json) =>
       _$WorkoutInfoFromJson(json);

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:myfitnessapp/data/appData.dart';
@@ -17,12 +18,30 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
+  var likeMap;
+
   List<WorkoutInfo> listee = [];
 
   final Stream<QuerySnapshot> workoutinfoStream =
       FirebaseFirestore.instance.collection('workoutinfo').snapshots();
   final CollectionReference workoutinfoCollection =
       FirebaseFirestore.instance.collection('workoutinfo');
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  late DocumentReference likesRef;
+  bool liked = false;
+  @override
+  void initState() {
+    final User? user = auth.currentUser;
+    final uid = user!.uid;
+    likesRef = FirebaseFirestore.instance.collection('likes').doc(uid);
+    print(uid);
+    likesRef.get().then((value) {
+      likeMap = value.data() as Map<String, dynamic>;
+    });
+
+    super.initState();
+  }
 
   getFireBaseData() async {
     Map<String, dynamic> map;
@@ -38,20 +57,44 @@ class _ExploreScreenState extends State<ExploreScreen> {
     print(listee.length);
   }
 
-  Future<void> likeButton(
-      QuerySnapshot<Object?> data, int index, bool liked) async {
+  likeButton(QuerySnapshot<Object?> data, int index, liked) async {
     FirebaseFirestore.instance.runTransaction((transaction) async {
       DocumentSnapshot freshSnap =
           await transaction.get(data.docs[index].reference);
-      if (liked) {
-        await transaction
-            .update(freshSnap.reference, {'likes': freshSnap['likes'] - 1});
-        await transaction.update(freshSnap.reference, {'liked': false});
+      DocumentSnapshot likeSnap = await transaction.get(likesRef);
+
+      String tempID = data.docs[index].id;
+      //print(tempID);
+      //print(likeMap[tempID]);
+      //var liked = likeSnap['tfzqDWj65bP83oHom39e'];
+      if (likeMap.keys.contains(tempID)) {
+        if (likeSnap[tempID] == true) {
+          likeMap[tempID] = false;
+          await transaction.update(likeSnap.reference, {tempID: false});
+          await transaction
+              .update(freshSnap.reference, {'likes': freshSnap['likes'] - 1});
+        } else {
+          likeMap[tempID] = true;
+          await transaction.update(likeSnap.reference, {tempID: true});
+          await transaction
+              .update(freshSnap.reference, {'likes': freshSnap['likes'] + 1});
+        }
       } else {
+        await transaction.update(likeSnap.reference, {tempID: true});
         await transaction
             .update(freshSnap.reference, {'likes': freshSnap['likes'] + 1});
-        await transaction.update(freshSnap.reference, {'liked': true});
+        likeMap[tempID] = true;
       }
+
+      // if (liked) {
+      //   await transaction
+      //       .update(freshSnap.reference, {'likes': freshSnap['likes'] - 1});
+      //   await transaction.update(freshSnap.reference, {'liked': false});
+      // } else {
+      //   await transaction
+      //       .update(freshSnap.reference, {'likes': freshSnap['likes'] + 1});
+      //   await transaction.update(freshSnap.reference, {'liked': true});
+      // }
     });
     // var collection = FirebaseFirestore.instance.collection('workoutinfo');
     // if (liked) {
@@ -95,15 +138,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
           return ListView.builder(
             itemCount: data.size,
             itemBuilder: (context, index) {
-              final d = data.docs[index]['categoryList'];
-
-              //print('i');
-              //print(data.docs.length);
-              bool liked = data.docs[index]['liked'];
+              String id = data.docs[index].id;
+              bool b = false;
+              if (likeMap.keys.contains(id)) {
+                b = true;
+              }
               return Row(children: [
                 Expanded(
                   child: ListTile(
-                      title: Text('${data.docs[index]['name']}',
+                      title: Text('${data.docs[index]['workoutName']}',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
                       subtitle: Text('level: ${data.docs[index]['level']}',
@@ -119,18 +162,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 Column(children: [
                   IconButton(
                       onPressed: () {
-                        final id = data.docs[index].id;
-                        //print(id);
-                        bool liked = data.docs[index]['liked'];
                         likeButton(data, index, liked);
-                        var x = data.docs.asMap();
-                        //print(x);
-                        //print('hallo');
                         setState(() {});
                       },
-                      icon: (liked)
-                          ? Icon(Icons.favorite, color: Colors.red)
-                          : Icon(Icons.favorite_border_outlined)),
+                      icon: (b == false)
+                          ? Icon(Icons.favorite_border_outlined)
+                          : ((likeMap[id])
+                              ? Icon(Icons.favorite, color: Colors.red)
+                              : Icon(Icons.favorite_border_outlined))),
                   Text('${data.docs[index]['likes']}')
                 ])
               ]);
@@ -201,7 +240,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       }
       counter++;
     });
-    String name = "name";
+    String name = "workoutName";
     nameMap.forEach((element) {
       String str = element[name];
 
@@ -232,7 +271,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       height: MediaQuery.of(context).size.height * 0.6,
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: Column(children: [
-                        Text('${docs[index]['name']}',
+                        Text('${docs[index]['workoutName']}',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20)),
                         Container(

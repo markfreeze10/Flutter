@@ -5,13 +5,12 @@ import 'package:myfitnessapp/model/workoutinfo_model.dart';
 
 List<WorkoutInfo> workoutInfoList = [
   WorkoutInfo(
-      workoutName: 'Brust aller',
+      workoutName: 'Brust',
       workoutDescription: '...',
       exerciseList: tempExercises,
       likes: 0,
       categoryList: [BodyCategory.chest, BodyCategory.arms],
-      level: Level.rookie,
-      liked: false)
+      level: Level.rookie)
 ];
 
 List<Workout> workoutList = [];

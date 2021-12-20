@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:myfitnessapp/base.dart';
 import 'package:myfitnessapp/data/appData.dart';
 import 'package:myfitnessapp/model/exercise_model.dart';
+import 'package:myfitnessapp/model/likes_model.dart';
 import 'package:myfitnessapp/model/workout_model.dart';
 import 'package:myfitnessapp/model/workoutinfo_model.dart';
 import 'package:myfitnessapp/model/workoutset_model.dart';
@@ -912,8 +913,7 @@ class _WorkoutBuildScreenState extends State<WorkoutBuildScreen> {
           exerciseList: exerList,
           level: lvl,
           categoryList: buildCategoryListFromString(selectedList),
-          likes: 0,
-          liked: false);
+          likes: 0);
 
       workoutInfoList.add(newWorkout);
       print(newWorkout);
