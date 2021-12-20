@@ -12,6 +12,7 @@ import 'package:myfitnessapp/screens/calendar.dart';
 import 'package:myfitnessapp/screens/exercise.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({Key? key}) : super(key: key);
@@ -718,12 +719,20 @@ class _WorkoutBuildScreenState extends State<WorkoutBuildScreen> {
   List<ExerciseData> exerList = [];
   //List<WorkoutInfo> workoutInfoList = [];
 
+  List<BodyCategory> selectedCategories = [];
+  BodyCategory? tempCategory;
+
+  final String chipName = "";
+  bool _isSelected = false;
+  List<bool> isSelected = [true, false, false];
   Future<void> saveWorkoutToSP(List<WorkoutInfo> workoutInfoList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var encodedWorkout = json.encode(workoutInfoList);
     prefs.setString(workoutInfoList.toString(), encodedWorkout);
     //print('hey ' + workoutInfoList.toString());
   }
+
+  Level lvl = Level.rookie;
 
   Future<void> getWorkoutFromSP(List<WorkoutInfo> workoutInfoList) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -804,7 +813,95 @@ class _WorkoutBuildScreenState extends State<WorkoutBuildScreen> {
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(4.0)))),
               )),
+          Padding(
+              padding: EdgeInsets.fromLTRB(9, 20, 9, 0),
+              child: Container(
+                  child: Wrap(
+                spacing: 8.0,
+                runSpacing: 3.0,
+                children: <Widget>[
+                  filterChipWidget(cat: 'Brust'),
+                  filterChipWidget(cat: 'Rücken'),
+                  filterChipWidget(cat: 'Schultern'),
+                  filterChipWidget(cat: 'Bauch'),
+                  filterChipWidget(cat: 'Arme'),
+                  filterChipWidget(cat: 'Beine'),
+                  filterChipWidget(cat: 'Mobility'),
+                ],
+              ))),
+          ToggleButtons(
+            selectedBorderColor: Colors.lightBlue,
+            borderRadius: BorderRadius.circular(50),
+            children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text('Anfänger')),
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text('Fortgeschritten')),
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  child: Text('Profi')),
+            ],
+            onPressed: (int index) {
+              setState(() {
+                switch (index) {
+                  case 0:
+                    lvl = Level.rookie;
+                    break;
+                  case 1:
+                    lvl = Level.mid;
+                    break;
+
+                  case 2:
+                    lvl = Level.pro;
+                    break;
+                  default:
+                    break;
+                }
+                for (int buttonIndex = 0;
+                    buttonIndex < isSelected.length;
+                    buttonIndex++) {
+                  if (buttonIndex == index) {
+                    isSelected[buttonIndex] = true;
+                  } else {
+                    isSelected[buttonIndex] = false;
+                  }
+                }
+              });
+            },
+            isSelected: isSelected,
+          ),
         ]));
+    //FilterChip(label: label, onSelected: onSelected)
+  }
+
+  Widget createFilterChip(BodyCategory cat) {
+    Widget w = FilterChip(
+        label: Text(getCategoryName(cat)),
+        labelStyle: TextStyle(
+            color: Color(0xff6200ee),
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold),
+        selected: _isSelected,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        backgroundColor: Color(0xffededed),
+        onSelected: (isSelected) {
+          setState(() {
+            _isSelected = isSelected;
+          });
+        });
+    return w;
+  }
+
+  List<BodyCategory> buildCategoryListFromString(List<String> strList) {
+    List<BodyCategory> catList = [];
+    strList.forEach((element) {
+      catList.add(getNameFromCategory(element));
+    });
+    return catList;
   }
 
   saveWorkout() {
@@ -812,9 +909,16 @@ class _WorkoutBuildScreenState extends State<WorkoutBuildScreen> {
       WorkoutInfo newWorkout = new WorkoutInfo(
           workoutName: nameController.text,
           workoutDescription: descController.text,
-          exerciseList: exerList);
+          exerciseList: exerList,
+          level: lvl,
+          categoryList: buildCategoryListFromString(selectedList),
+          likes: 0,
+          liked: false);
+
       workoutInfoList.add(newWorkout);
+      print(newWorkout);
     });
+    selectedList.clear();
 
     Navigator.push(
         context,
@@ -834,5 +938,44 @@ class _WorkoutBuildScreenState extends State<WorkoutBuildScreen> {
       }
     });
     return list;
+  }
+}
+
+class filterChipWidget extends StatefulWidget {
+  final String cat;
+
+  filterChipWidget({Key? key, required this.cat}) : super(key: key);
+
+  @override
+  _filterChipWidgetState createState() => _filterChipWidgetState();
+}
+
+class _filterChipWidgetState extends State<filterChipWidget> {
+  bool _isSelected = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilterChip(
+      label: Text(widget.cat),
+      labelStyle: TextStyle(
+          color: Colors.black, fontSize: 15.0, fontWeight: FontWeight.bold),
+      selected: _isSelected,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      backgroundColor: Color(0xffededed),
+      onSelected: (isSelected) {
+        if (isSelected) {
+          selectedList.add(widget.cat);
+        } else {
+          selectedList.remove(widget.cat);
+        }
+        print(selectedList);
+        setState(() {
+          _isSelected = isSelected;
+        });
+      },
+      selectedColor: Colors.blue,
+    );
   }
 }

@@ -33,6 +33,7 @@ dependencies:
   json_annotation: ^4.4.0
   json_serializable: ^6.1.1
   list_treeview: ^0.3.0
+  multi_select_flutter: ^4.0.0
   scrollable_positioned_list: ^0.2.1
   shared_preferences: ^2.0.11
   syncfusion_flutter_calendar: ^19.3.59

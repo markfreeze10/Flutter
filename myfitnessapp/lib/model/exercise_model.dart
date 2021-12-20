@@ -48,8 +48,37 @@ enum BodyCategory {
   all
 }
 
-String getCategoryName(BodyCategory category) {
-  switch (category) {
+BodyCategory getNameFromCategory(String str) {
+  switch (str) {
+    case 'Brust':
+      return BodyCategory.chest;
+      break;
+    case 'Rücken':
+      return BodyCategory.back;
+      break;
+    case 'Arme':
+      return BodyCategory.arms;
+      break;
+    case 'Beine':
+      return BodyCategory.legs;
+      break;
+    case 'Bauch':
+      return BodyCategory.abs;
+      break;
+    case 'Schultern':
+      return BodyCategory.shoulders;
+      break;
+    case 'Mobility':
+      return BodyCategory.mobility;
+      break;
+    default:
+      return BodyCategory.all;
+      break;
+  }
+}
+
+String getCategoryName(BodyCategory cat) {
+  switch (cat) {
     case BodyCategory.chest:
       return 'Brust';
       break;
@@ -71,10 +100,8 @@ String getCategoryName(BodyCategory category) {
     case BodyCategory.mobility:
       return 'Mobility';
       break;
-    case BodyCategory.all:
-      return 'Alle Übungen';
-      break;
     default:
+      print('bljad');
       return 'Fehler';
       break;
   }

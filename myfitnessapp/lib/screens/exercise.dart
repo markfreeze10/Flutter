@@ -111,8 +111,6 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
     BodyCategory.mobility
   ];
 
-  BodyCategory dropDownCategory = BodyCategory.back;
-
   static const String defaultImg = 'assets/strong.png';
 
   final exercise = ExerciseData(
@@ -141,12 +139,14 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
   }
   */
+  BodyCategory dropDownCategory = BodyCategory.abs;
+
   @override
   Widget build(BuildContext context) {
     final category = ModalRoute.of(context)!.settings.arguments as BodyCategory;
     String categoryName = getCategoryName(category);
     //saveExerciseToSP(Exercises);
-
+    dropDownCategory = BodyCategory.abs;
     return Scaffold(
         appBar: AppBar(
             leading: IconButton(
@@ -247,22 +247,22 @@ class _ExerciseListScreen extends State<ExerciseListScreen> {
         Padding(
             padding: EdgeInsets.all(1),
             child: DropdownButton<BodyCategory>(
-              value: dropDownCategory,
-              underline: Container(
-                height: 2,
-                color: Color(0xff31a6dc),
-              ),
-              items: allCategories.map((BodyCategory bodyCategory) {
-                return new DropdownMenuItem<BodyCategory>(
-                  value: bodyCategory,
-                  child: new Text(getCategoryName(bodyCategory)),
-                );
-              }).toList(),
+              hint: Text('Choose BodyCategory'),
               onChanged: (BodyCategory? newCategory) {
                 setState(() {
                   dropDownCategory = newCategory!;
                 });
               },
+              value: dropDownCategory,
+              /* underline: Container(
+                height: 2,
+                color: Color(0xff31a6dc),
+              ), */
+              items: allCategories.map((BodyCategory bCat) {
+                print(allCategories.map);
+                return new DropdownMenuItem<BodyCategory>(
+                    value: bCat, child: Text(getCategoryName(bCat)));
+              }).toList(),
             ))
       ]);
     } else {

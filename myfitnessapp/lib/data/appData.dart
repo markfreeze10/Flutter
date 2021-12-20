@@ -3,7 +3,16 @@ import 'package:myfitnessapp/model/exercise_model.dart';
 import 'package:myfitnessapp/model/workout_model.dart';
 import 'package:myfitnessapp/model/workoutinfo_model.dart';
 
-List<WorkoutInfo> workoutInfoList = [];
+List<WorkoutInfo> workoutInfoList = [
+  WorkoutInfo(
+      workoutName: 'Brust aller',
+      workoutDescription: '...',
+      exerciseList: tempExercises,
+      likes: 0,
+      categoryList: [BodyCategory.chest, BodyCategory.arms],
+      level: Level.rookie,
+      liked: false)
+];
 
 List<Workout> workoutList = [];
 int pageCounter = 0;
@@ -95,3 +104,14 @@ final Exercises = [
       imageName: 'assets/spagat.jpg',
       editable: false),
 ];
+
+List<BodyCategory> allCategories = [
+  BodyCategory.chest,
+  BodyCategory.back,
+  BodyCategory.arms,
+  BodyCategory.shoulders,
+  BodyCategory.legs,
+  BodyCategory.abs,
+  BodyCategory.mobility
+];
+List<String> selectedList = [];
