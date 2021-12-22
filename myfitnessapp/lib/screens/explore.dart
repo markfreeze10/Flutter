@@ -29,11 +29,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   final FirebaseAuth auth = FirebaseAuth.instance;
   late DocumentReference likesRef;
-  bool liked = false;
+  late final uid;
   @override
   void initState() {
     final User? user = auth.currentUser;
-    final uid = user!.uid;
+    uid = user!.uid;
     likesRef = FirebaseFirestore.instance.collection('likes').doc(uid);
     print(uid);
     likesRef.get().then((value) {
@@ -57,7 +57,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
     print(listee.length);
   }
 
-  likeButton(QuerySnapshot<Object?> data, int index, liked) async {
+  bool bb = false;
+  likeButton(QuerySnapshot<Object?> data, int index) async {
     FirebaseFirestore.instance.runTransaction((transaction) async {
       DocumentSnapshot freshSnap =
           await transaction.get(data.docs[index].reference);
@@ -86,6 +87,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
         likeMap[tempID] = true;
       }
 
+      bb = likeMap[tempID];
       // if (liked) {
       //   await transaction
       //       .update(freshSnap.reference, {'likes': freshSnap['likes'] - 1});
@@ -139,10 +141,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
             itemCount: data.size,
             itemBuilder: (context, index) {
               String id = data.docs[index].id;
-              bool b = false;
-              if (likeMap.keys.contains(id)) {
-                b = true;
-              }
+
               return Row(children: [
                 Expanded(
                   child: ListTile(
@@ -162,10 +161,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 Column(children: [
                   IconButton(
                       onPressed: () {
-                        likeButton(data, index, liked);
+                        likeButton(data, index);
                         setState(() {});
+                        print(bb);
                       },
-                      icon: (b == false)
+                      icon: !(likeMap.keys.contains(id))
                           ? Icon(Icons.favorite_border_outlined)
                           : ((likeMap[id])
                               ? Icon(Icons.favorite, color: Colors.red)
@@ -178,6 +178,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
         },
       ),
     );
+  }
+
+  bool b = false;
+  getActualLikedStatus(String tempID) async {
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentSnapshot likeSnap = await transaction.get(likesRef);
+      b = likeSnap[tempID];
+    });
+    if (b) {
+      return Future<bool>.value(true);
+    } else {
+      return Future<bool>.value(false);
+    }
   }
 
   Future uploadDialog() {
